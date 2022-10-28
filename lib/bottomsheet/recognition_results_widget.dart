@@ -1,7 +1,9 @@
-import 'package:deneme1/buttons_widget.dart';
 import 'package:deneme1/consts.dart';
-import 'package:deneme1/recognition_header.dart';
+
 import 'package:flutter/material.dart';
+
+import 'buttons_widget.dart';
+import 'recognition_header.dart';
 
 class RecognitionResultsWidget extends StatefulWidget {
   final bool hasSpeech;
@@ -35,6 +37,8 @@ class RecognitionResultsWidget extends StatefulWidget {
 class _RecognitionResultsWidgetState extends State<RecognitionResultsWidget> {
   late TextEditingController _textEditController;
   bool isEnable = false;
+  bool isCheck = false;
+  bool counter = false;
   @override
   void initState() {
     _textEditController = TextEditingController();
@@ -44,14 +48,25 @@ class _RecognitionResultsWidgetState extends State<RecognitionResultsWidget> {
   void changeEnableStatus() {
     setState(() {
       isEnable = !isEnable;
+      if (!counter) {
+        isCheck = true;
+        counter = true;
+      }
     });
+  }
+
+  void checkCheckStatus() {
+    setState(() {});
+    counter = false;
+    isCheck = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isListening) {
+    if (!isCheck) {
       _textEditController.text = widget.lastWords;
     }
+    debugPrint(widget.lastWords);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -96,6 +111,7 @@ class _RecognitionResultsWidgetState extends State<RecognitionResultsWidget> {
               ),
               ButtonsWidget(
                   isEnabled: isEnable,
+                  changeCheckStatus: checkCheckStatus,
                   hasSpeech: widget.hasSpeech,
                   isListening: widget.isListening,
                   startListening: widget.startListening,

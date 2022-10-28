@@ -1,5 +1,9 @@
-import 'package:deneme1/bottomsheet.dart';
+import 'dart:io';
+
+import 'package:deneme1/abstract/permission_abstract.dart';
+import 'package:deneme1/bottomsheet/bottomsheet.dart';
 import 'package:deneme1/consts.dart';
+import 'package:deneme1/manager/permission_manager.dart';
 import 'package:deneme1/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,8 +29,8 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget> {
   String speechText = "";
-  final PermissionHandlerPlatform _permissionHandler =
-      PermissionHandlerPlatform.instance;
+  Permission permission = Permission.microphone;
+  final IPermission _permission = PermissionManager();
 
   @override
   Widget build(BuildContext context) {
@@ -85,23 +89,18 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   Future showBottomSheetWidget() async {
-    var status = await Permission.speech.status;
-    if ((status.isGranted)) {
+    if (Platform.isAndroid) {
+      permission = Permission.microphone;
+    } else if (Platform.isIOS) {
+      permission = Permission.speech;
+    }
+    final permissionResult = await _permission.handlePermission(permission);
+
+    if ((permissionResult)) {
       bottomSheet();
-    } else if (status.isDenied) {
-      final requestResult =
-          await _permissionHandler.requestPermissions([Permission.speech]);
-      status = await Permission.speech.status;
-      if (status.isDenied) {
-        if (requestResult.toString().contains("permanentlyDenied")) {
-          openAppSettings();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              Utils.getSnacBar("Konuşabilmek için izin vermelisiniz"));
-        }
-      } else {
-        bottomSheet();
-      }
+    } else {
+      Utils.getSnacBar(
+          title: "Konuşabilmek için izin vermelisiniz", context: context);
     }
   }
 }

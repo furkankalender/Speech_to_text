@@ -8,6 +8,7 @@ class ButtonsWidget extends StatelessWidget {
   final bool isEnabled;
   final double level;
   final Function stopListening;
+  final Function changeCheckStatus;
   final Function startListening;
   final Function changeEnableStatus;
   const ButtonsWidget(
@@ -15,6 +16,7 @@ class ButtonsWidget extends StatelessWidget {
       required this.hasSpeech,
       required this.isEnabled,
       required this.changeEnableStatus,
+      required this.changeCheckStatus,
       required this.isListening,
       required this.startListening,
       required this.stopListening,
@@ -51,6 +53,7 @@ class ButtonsWidget extends StatelessWidget {
                       color: backgroundColor,
                     ),
                     onPressed: () {
+                      changeCheckStatus();
                       startListening();
                     }),
               ),
@@ -65,6 +68,7 @@ class ButtonsWidget extends StatelessWidget {
                 color: isEnabled ? buttonsColor : backgroundColor,
               ),
               onPressed: () {
+                changeCheckStatus();
                 changeEnableStatus();
               },
             ),
