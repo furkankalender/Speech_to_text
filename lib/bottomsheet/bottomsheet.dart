@@ -26,13 +26,10 @@ class BottomSheedWidgetState extends State<BottomSheedWidget> {
   }
 
   bool _hasSpeech = false;
-  final TextEditingController _pauseForController =
-      TextEditingController(text: '5');
-  final TextEditingController _listenForController =
-      TextEditingController(text: '30');
+
   double level = 0.0;
   double minSoundLevel = 50000;
-  double maxSoundLevel = -50000;
+  double maxSoundLevel = -60000;
   String lastWords = '';
   String _currentLocaleId = '';
   bool firstTry = false;
@@ -47,7 +44,7 @@ class BottomSheedWidgetState extends State<BottomSheedWidget> {
         _localeNames = await speech.locales();
 
         var systemLocale = await speech.systemLocale();
-        _currentLocaleId = systemLocale?.localeId ?? '';
+        _currentLocaleId = "tr_TR";
       }
       if (!mounted) return;
 
@@ -107,18 +104,16 @@ class BottomSheedWidgetState extends State<BottomSheedWidget> {
 
   void startListening() {
     lastWords = '';
-    final pauseFor = int.tryParse(_pauseForController.text);
-    final listenFor = int.tryParse(_listenForController.text);
+    debugPrint(_currentLocaleId);
     speech.listen(
         onResult: resultListener,
-        listenFor: Duration(seconds: listenFor ?? 30),
-        pauseFor: Duration(seconds: pauseFor ?? 3),
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 5),
         partialResults: true,
         localeId: _currentLocaleId,
         onSoundLevelChange: soundLevelListener,
         cancelOnError: true,
         listenMode: ListenMode.confirmation);
-    setState(() {});
   }
 
   void stopListening() {
